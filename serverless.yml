@@ -4,7 +4,7 @@ provider:
   name: google
   runtime: go111
   project: raspy-276913
-  credentials: ~/.gcloud/raspy-276913-92ab7052751f.json
+  credentials: ~/gcloud_raspy.json
 
 plugins:
   - serverless-google-cloudfunctions

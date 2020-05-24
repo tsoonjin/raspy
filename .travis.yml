@@ -8,6 +8,7 @@ go:
 env: GO111MODULE=on
 
 before_install:
+  - openssl aes-256-cbc -K $encrypted_54ea099b33b2_key -iv $encrypted_54ea099b33b2_iv -in raspy-276913-92ab7052751f.json.enc -out ~/gcloud_raspy.json -d
   - go mod download
 
 install:
@@ -31,8 +32,6 @@ script:
   - goverage -v -race -covermode=atomic -coverprofile=coverage.txt $PKGS # Run all tests with coverage
   - go vet -v ./...                                                      # static analyisis
   - golangci-lint run ./...
-
-deploy:
   - sls deploy
 
 after_success:
