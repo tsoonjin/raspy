@@ -13,6 +13,7 @@ before_install:
 install:
   - go get github.com/haya14busa/goverage
   - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.21.0
+  - npm install -g serverless
 
 matrix:
   allow_failures:
@@ -30,6 +31,9 @@ script:
   - goverage -v -race -covermode=atomic -coverprofile=coverage.txt $PKGS # Run all tests with coverage
   - go vet -v ./...                                                      # static analyisis
   - golangci-lint run ./...
+
+deploy:
+  - sls deploy
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
