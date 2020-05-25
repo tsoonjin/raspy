@@ -8,13 +8,14 @@ go:
 env: GO111MODULE=on
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_54ea099b33b2_key -iv $encrypted_54ea099b33b2_iv -in raspy-276913-92ab7052751f.json.enc -out ~/gcloud_raspy.json -d
+  - openssl aes-256-cbc -K $encrypted_89b033158cc6_key -iv $encrypted_89b033158cc6_iv -in gcloud_raspy.json.enc -out ~/gcloud_raspy.json -d
   - go mod download
 
 install:
   - go get github.com/haya14busa/goverage
   - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.21.0
   - npm install -g serverless
+  - npm install --save serverless-google-cloudfunctions
 
 matrix:
   allow_failures:
