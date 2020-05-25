@@ -15,6 +15,14 @@ type (
 	}
 )
 
+type (
+    article struct {
+        id       int       `json:"id"`
+        title    string    `json:"title"`
+        body     string    `json:"body"`
+    }
+)
+
 var (
 	users = map[int]*user{}
 	seq   = 1
