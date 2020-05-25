@@ -20,6 +20,9 @@ package:
 functions:
   hello:
     handler: Hello
-    unauthenticatedAccess: true
     events:
-      - http: hello
+      - http: main
+  simplify:
+    handler: SimplifyHandler
+    events:
+      - http: main

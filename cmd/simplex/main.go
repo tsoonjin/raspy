@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"strconv"
+    "strings"
     "fmt"
     "github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -21,6 +22,10 @@ type Article struct {
   Body string `json:"body" form:"email" query:"email"`
 }
 
+type SimplifyRequest struct {
+  Url  string `json:"url"`
+}
+
 type (
 	user struct {
 		ID   int    `json:"id"`
@@ -36,6 +41,13 @@ type (
     }
 )
 
+type Page struct {
+    Content string
+    Imgs []string
+    Links []string
+    Videos []string
+}
+
 var (
 	users    = map[int]*user{}
 	articles = map[string]*Article{}
@@ -46,9 +58,23 @@ func NewArticle() article {
     return article{}
 }
 
+func processUrl(url string) Page {
+
+}
+
 //----------
 // Handlers
 //----------
+
+func simplifyUrl(c echo.Context) error {
+    req := new(SimplifyRequest)
+	if err := c.Bind(req); err != nil {
+		return err
+	}
+    urls := strings.Split(req.Url, ",")
+    fmt.Println(urls)
+	return c.JSON(http.StatusCreated, req)
+}
 
 func createArticle(c echo.Context) error {
     id := uuid.New().String()
@@ -107,6 +133,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
+	e.POST("/simplify", simplifyUrl)
 	e.POST("/users", createUser)
 	e.POST("/articles", createArticle)
 	e.GET("/articles/:id", getArticle)

@@ -1,8 +1,9 @@
-package hello
+package raspy
 
 import (
 	"fmt"
 	"net/http"
+    simplify "github.com/tsoonjin/raspy/pkg/simplify"
 )
 
 func Hello(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +14,4 @@ func Hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %s!", name)
 }
 
-func Simplify(w http.ResponseWriter, r *http.Request) {
-
-}
+SimplifyHandler := simplify.Handler;
