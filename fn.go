@@ -3,7 +3,7 @@ package raspy
 import (
 	"fmt"
 	"net/http"
-    simplify "github.com/tsoonjin/raspy/pkg/simplify"
+    "github.com/tsoonjin/raspy/pkg/simplex/simplify"
 )
 
 func Hello(w http.ResponseWriter, r *http.Request) {

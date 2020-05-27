@@ -59,7 +59,7 @@ func NewArticle() article {
 }
 
 func processUrl(url string) Page {
-
+    return Page{}
 }
 
 //----------
