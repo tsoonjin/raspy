@@ -3,7 +3,7 @@ package raspy
 import (
 	"fmt"
 	"net/http"
-    "github.com/tsoonjin/raspy/pkg/simplex/simplify"
+    "github.com/tsoonjin/raspy/pkg/simplex"
 )
 
 func Hello(w http.ResponseWriter, r *http.Request) {
@@ -14,4 +14,4 @@ func Hello(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %s!", name)
 }
 
-SimplifyHandler := simplify.Handler;
+var SimplifyHandler = simplex.Handler;
