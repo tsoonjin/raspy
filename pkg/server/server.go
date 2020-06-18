@@ -3,6 +3,7 @@ package server
 import (
     "log"
 
+    "github.com/tsoonjin/raspy/internal/orm"
     "github.com/gin-gonic/gin"
     "github.com/tsoonjin/raspy/internal/handlers"
     "github.com/tsoonjin/raspy/pkg/utils"
@@ -18,7 +19,8 @@ func init() {
 }
 
 // Run spins up the server
-func Run() {
+func Run(orm *orm.ORM) {
+    log.Println("GORM_CONNECTION_DSN: ", utils.MustGet("GORM_CONNECTION_DSN"))
     endpoint := "http://" + host + ":" + port
     r := gin.Default()
     // Simple keep-alive/ping handler
@@ -27,7 +29,7 @@ func Run() {
     r.GET(gqlPgPath, handlers.PlaygroundHandler(gqlPath))
     log.Println("GraphQL Playground @ " + endpoint + gqlPgPath)
 
-    r.POST(gqlPath, handlers.GraphqlHandler())
+    r.POST(gqlPath, handlers.GraphqlHandler(orm))
     log.Println("GraphQL @ " + endpoint + gqlPath)
 
     // Inform the user where the server is listening

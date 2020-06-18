@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -66,7 +67,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Page func(childComplexity int, url string) int
+		Page  func(childComplexity int, url string) int
+		Pages func(childComplexity int) int
 	}
 
 	Video struct {
@@ -81,6 +83,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Page(ctx context.Context, url string) (*models.Page, error)
+	Pages(ctx context.Context) ([]*models.Page, error)
 }
 
 type executableSchema struct {
@@ -197,6 +200,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Page(childComplexity, args["url"].(string)), true
 
+	case "Query.pages":
+		if e.complexity.Query.Pages == nil {
+			break
+		}
+
+		return e.complexity.Query.Pages(childComplexity), true
+
 	case "Video.src":
 		if e.complexity.Video.Src == nil {
 			break
@@ -300,6 +310,7 @@ type Page {
 
 type Query {
   page(url: String!): Page
+  pages: [Page!]!
 }
 
 type Mutation {
@@ -827,6 +838,40 @@ func (ec *executionContext) _Query_page(ctx context.Context, field graphql.Colle
 	res := resTmp.(*models.Page)
 	fc.Result = res
 	return ec.marshalOPage2ᚖgithubᚗcomᚋtsoonjinᚋraspyᚋinternalᚋgqlᚋmodelsᚐPage(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_pages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Pages(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Page)
+	fc.Result = res
+	return ec.marshalNPage2ᚕᚖgithubᚗcomᚋtsoonjinᚋraspyᚋinternalᚋgqlᚋmodelsᚐPageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2194,6 +2239,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_page(ctx, field)
+				return res
+			})
+		case "pages":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_pages(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "__type":
